@@ -127,13 +127,19 @@ class PromptManager:
                 {"role": "system", "content": json.dumps(prompt)},
                 ]
             )
-
             response = completion.choices[0].message.content
+            
             if response_store[1] == False:
                 setattr(TempResponseStore, response_store[0], response)
             else:
                 setattr(TempResponseStore, response_store[0], getattr(TempResponseStore, response_store[0]) + response_store[1] + response)
 
+            if len(ModelInstruct.iset) != 1:
+                ModelInstruct.iset = ModelInstruct.iset[1:]
+            else:
+                print("All instructions Completed. Total Instruction Count: ", ModelInstruct.comps + 1)
+                return
+                
             if revise_instruct:
                 init_context = getattr(TempResponseStore, response_store[0]) + "\n"
                 revision = ModelInstruct.iset + rev_instruct
